@@ -10,8 +10,8 @@ kwtr2 = '@2'
 duo_letters = d = '@d'
 
 actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
-           'kick', 'out', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
-           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'video game', 'exercise', f'rob{d}',
+           'kick', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
+           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'shoot', 'exercise', f'rob{d}',
            f'jog{d}']
 
 # You can easily add new responses below
@@ -57,6 +57,6 @@ neutral_replies = [
     f"Introverts like me don't get to choose. {kwtr1}ing it is!",
     f"{kwtr1}ing sounds okay. Let's start {kwtr2}ing as well to make it more fun.",
     f"If the weather is good, then so is my mood for {kwtr1}ing.",
-    f"I woke up today and got the feeling that I would {kwtr1}.",
-    f"May it be {kwtr1}ing or {kwtr1}ing, {kwtr2}ing should always be a part of today activities."
+    f"I woke up today and got the feeling that I would go {kwtr1}.",
+    f"May it be {kwtr1}ing or {kwtr1}ing, {kwtr2}ing should always be a part of today's activities."
 ]
