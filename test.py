@@ -45,3 +45,7 @@ print(valgt_chars)
 
 # m = re.search('hello', 'hello! world')
 # print(m.group(0))
+
+a = 'drive'
+a2 = a.rsplit('e', 1)
+print(a2)

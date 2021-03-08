@@ -14,6 +14,7 @@ replied = False
 list_of_bots = ['andrea', 'steven', 'arthur']
 extracted_actions = []
 extracted_reaction = ''
+msg_sender = ''
 
 host, port, alias = None, None, None
 try:
@@ -49,7 +50,7 @@ def generate_bots():
 
 
 def receive():
-    global alias, extracted_actions, replied, stop_thread, extracted_reaction
+    global alias, extracted_actions, replied, stop_thread, extracted_reaction, msg_sender
 
     while True:
         if stop_thread:
@@ -139,12 +140,13 @@ def receive():
                     print(incoming_msg.decode())
 
         # If server is no longer running, stop receiving thread
-        except ConnectionError as err:
+        except Exception as err:
 
             print(f"\nServer is no longer running."
                   f"You can terminate the connection with 'quit' keyword.")
             print(err)
             stop_thread = True
+            client.close()
 
 
 def respond(reaction):
@@ -153,8 +155,8 @@ def respond(reaction):
     while not replied:
 
         # Shows that the bot is formulating a reply
-        print(f"----------(Actions found from previous reply: {extracted_actions})")
-        print(f"----------(Your bot is formulating a {reaction} response...)\n")
+        print(f"\t[Actions found from previous reply: {extracted_actions} ]")
+        print(f"\t[(Your bot is formulating a {reaction} response...)]\n")
         time.sleep(2)
 
         response = bot(alias, extracted_actions, reaction)
@@ -178,6 +180,10 @@ def client_command():
                 stop_thread = True
                 break
             elif command == 'reply':
+                '''if msg_sender == alias:
+                    print(f"\t[You can't reply to your own message.]\n")
+                    continue
+                else:'''
                 replied = False
                 respond(extracted_reaction)
             else:

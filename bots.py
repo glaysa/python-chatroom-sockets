@@ -75,23 +75,23 @@ def formulate_sentence(sentence, reaction):
             if number_of_actions >= count_keyword_1:
                 break
 
-        return replace_keyword(sentence, keyword_to_replace1, count_keyword_1)
+        return replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
 
     # if the number of actions is enough to replace the number of placeholders
     else:
         if count_keyword_1 > 0:
             new_actions.clear()
-            sentence = replace_keyword(sentence, keyword_to_replace1, count_keyword_1)
+            sentence = replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
         if count_keyword_2 > 0:
             new_actions.clear()
-            sentence = replace_keyword(sentence, keyword_to_replace2, count_keyword_2)
+            sentence = replace_placeholder(sentence, keyword_to_replace2, count_keyword_2)
 
     return sentence
 
 
 # Generates actions from the bot actions list
 def suggest_new_action():
-    action = responses.actions.pop(random.choice(range(len(responses.actions))))
+    action = responses.e_actions.pop(random.choice(range(len(responses.e_actions))))
     if action not in new_actions:
         new_actions.append(action)
     return action
@@ -106,24 +106,37 @@ def get_action():
 
 
 # Replace (wtr*) with random actions
-def replace_keyword(text, keyword, limit):
-
+def replace_placeholder(sentence, keyword, limit):
     # If placeholder replacement should be from extracted actions
     if keyword == kwtr1:
         for i in range(limit):
-            text = re.sub(kwtr1, get_action(), text, 1)
+            action = get_action()
+            sentence = re.sub(kwtr1, action, sentence, 1)
+
+            s_counter = count(sentence, (action + 'ing'))
+            if s_counter > 0:
+                if str(action).endswith('e'):
+                    a2 = str(action).rsplit('e', 1)
+                    sentence = re.sub(action, a2[0], sentence, 1)
 
     # If placeholder replacement should be from bots actions
     if keyword == kwtr2:
         for i in range(limit):
-            text = re.sub(kwtr2, suggest_new_action(), text, 1)
+            action = suggest_new_action()
+            sentence = re.sub(kwtr2, action, sentence, 1)
 
-    return text
+            s_counter = count(sentence, (action + 'ing'))
+            if s_counter > 0:
+                if str(action).endswith('e'):
+                    a2 = str(action).rsplit('e', 1)
+                    sentence = re.sub(action, a2[0], sentence, 1)
+
+    return sentence
 
 
 # Counts how many placeholders needs to be replaced
-def count(text, word_to_replace):
+def count(sentence, word_to_replace):
     counter = 0
-    for _ in re.finditer(word_to_replace, text):
+    for _ in re.finditer(word_to_replace, sentence):
         counter += 1
     return counter

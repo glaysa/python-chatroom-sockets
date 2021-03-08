@@ -3,12 +3,16 @@
 kwtr1 = '@1'
 kwtr2 = '@2'
 
-actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
+'''actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
            'kick', 'out', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
-           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'video game']
+           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'video game']'''
 
-# Can easily add new responses
-# When adding a dynamic actions, just use the placeholder to generate a random action
+e_actions = ['code', 'dance', 'exercise', 'hike', 'skate', 'carve', 'drive', 'picture take', 'video game', 'race']
+
+# You can easily add new responses below
+# When adding new responses, use placeholders
+# That way, the placeholder will be replaced with a dynamic action
+# When placeholders are not used, the action isn't read by other clients
 
 negative_replies = [
     f"{kwtr1}ing is giving me deja vu. Let's do {kwtr2}ing instead.",
@@ -31,7 +35,7 @@ positive_replies = [
     f"I am mentally and financially prepared to {kwtr1} and {kwtr1}.",
     f"{kwtr1}ing and {kwtr1}ing? You just suggested something very fun.",
     f"Finally someone with ideas! {kwtr1}ing sounds really fun! Count me in!",
-    f"It's the perfect timing for {kwtr1}ing!",
+    f"It's the perfect timing for {kwtr1}ing! What about {kwtr2}ing?",
     f"It's been a while since we went {kwtr1}ing. Let's do that guys!",
     f"My mood says YES! to {kwtr1}ing!",
     f"Hmm... {kwtr1}ing you say ... I thought you'd never ask!",
@@ -44,9 +48,9 @@ neutral_replies = [
     f"I'm bad at {kwtr1}ing, but {kwtr1}ing sounds okay.",
     f"If I can improve my skills in {kwtr1}ing, I don't mind {kwtr1}ing as well.",
     f"{kwtr1}ing and {kwtr1}ing is not up to my alley, but I'll still come.",
-    f"I don't mind {kwtr1}ing.",
+    f"I don't mind {kwtr1}ing. I heard {kwtr2}ing is fun too!",
     f"Introverts like me don't get to choose. {kwtr1}ing it is!",
-    f"{kwtr1}ing sounds okay.",
+    f"{kwtr1}ing sounds okay. Let's start {kwtr2}ing as well to make it more fun.",
     f"If the weather is good, then so is my mood for {kwtr1}ing.",
     f"I woke up today and got the feeling that I would {kwtr1}.",
     f"May it be {kwtr1}ing or {kwtr1}ing, {kwtr2}ing should always be a part of today activities."
