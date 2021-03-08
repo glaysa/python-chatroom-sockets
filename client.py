@@ -5,7 +5,6 @@ import socket
 import random
 import json
 import time
-import sys
 
 # Status indicators
 stop_thread = False
@@ -158,25 +157,7 @@ def respond(reaction):
         print(f"----------(Your bot is formulating a {reaction} response...)\n")
         time.sleep(2)
 
-        response = {}
-        bot = None
-
-        # When the given alias is not an alias of any default bots
-        # The if statement below assigns a random default bot to the given alias
-        # This way, the bots are reused, just with a different alias
-
-        if alias not in list_of_bots:
-            bot = random.choice([1, 2, 3])
-
-        # Actions and reactions are passed in to the bots
-        if alias == 'andrea' or bot == 1:
-            response = andrea(alias, extracted_actions, reaction)
-        elif alias == 'steven' or bot == 2:
-            response = steven(alias, extracted_actions, reaction)
-        elif alias == 'arthur' or bot == 3:
-            response = arthur(alias, extracted_actions, reaction)
-
-        # Bot responses are converted to json objects
+        response = bot(alias, extracted_actions, reaction)
         bot_response = json.dumps(response)
         client.send(bot_response.encode())
         replied = True
