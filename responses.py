@@ -3,11 +3,18 @@
 kwtr1 = '@1'
 kwtr2 = '@2'
 
+# Some actions need to be change when becoming an ing action
+# F.eks rob becomes robbing
+# to indicate the action needs double letters,
+# the variable 'duo_letters' is introduced
+duo_letters = d = '@d'
+
 '''actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
            'kick', 'out', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
            'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'video game']'''
 
 e_actions = ['code', 'dance', 'exercise', 'hike', 'skate', 'carve', 'drive', 'picture take', 'video game', 'race']
+d_actions = [f'jog{d}', f'rob{d}']
 
 # You can easily add new responses below
 # When adding new responses, use placeholders

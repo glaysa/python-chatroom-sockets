@@ -46,6 +46,10 @@ print(valgt_chars)
 # m = re.search('hello', 'hello! world')
 # print(m.group(0))
 
-a = 'drive'
-a2 = a.rsplit('e', 1)
-print(a2)
+a = 'jog@'
+a2 = a.rsplit('@', 1)[0]
+l = a2[len(a2) - 1:]
+a3 = str(a2 + l)
+
+print(l)
+print(a3)

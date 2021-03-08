@@ -59,9 +59,6 @@ def generate_reply(reaction):
     return formulate_sentence(sentence, reaction)
 
 
-# Replies from responses.py uses placeholders (kwtr1 and kwtr2) for actions
-# This method replaces those placeholders with valid actions
-
 def formulate_sentence(sentence, reaction):
     count_keyword_1 = count(sentence, keyword_to_replace1)
     count_keyword_2 = count(sentence, keyword_to_replace2)
@@ -91,13 +88,13 @@ def formulate_sentence(sentence, reaction):
 
 # Generates actions from the bot actions list
 def suggest_new_action():
-    action = responses.e_actions.pop(random.choice(range(len(responses.e_actions))))
+    action = responses.d_actions.pop(random.choice(range(len(responses.d_actions))))
     if action not in new_actions:
         new_actions.append(action)
     return action
 
 
-# Generates actions coming other clients
+# Generates actions suggested by other clients
 def get_action():
     action = extracted_actions.pop(random.choice(range(len(extracted_actions))))
     if action not in new_actions:
@@ -105,31 +102,78 @@ def get_action():
     return action
 
 
-# Replace (wtr*) with random actions
+# Replies from responses.py uses placeholders (kwtr1 and kwtr2) for actions
+# This method replaces those placeholders with valid actions
+
 def replace_placeholder(sentence, keyword, limit):
+
     # If placeholder replacement should be from extracted actions
     if keyword == kwtr1:
         for i in range(limit):
             action = get_action()
             sentence = re.sub(kwtr1, action, sentence, 1)
-
-            s_counter = count(sentence, (action + 'ing'))
-            if s_counter > 0:
-                if str(action).endswith('e'):
-                    a2 = str(action).rsplit('e', 1)
-                    sentence = re.sub(action, a2[0], sentence, 1)
+            sentence = grammar_fixer(sentence, action)
 
     # If placeholder replacement should be from bots actions
     if keyword == kwtr2:
         for i in range(limit):
             action = suggest_new_action()
             sentence = re.sub(kwtr2, action, sentence, 1)
+            sentence = grammar_fixer(sentence, action)
 
-            s_counter = count(sentence, (action + 'ing'))
-            if s_counter > 0:
-                if str(action).endswith('e'):
-                    a2 = str(action).rsplit('e', 1)
-                    sentence = re.sub(action, a2[0], sentence, 1)
+    return sentence
+
+
+# Fixes the form of actions
+def grammar_fixer(sentence, action):
+    ing_counter = count(sentence, (action + 'ing'))
+
+    if ing_counter > 0:
+
+        # F.eks action ends with an 'e' but
+        # the sentence needs it to end with an 'ing'
+
+        if str(action).endswith('e'):
+
+            # If        action = 'drive'
+            # then      a2 = 'driv'
+            # action becomes 'driving' in the sentence
+
+            a2 = str(action).rsplit('e', 1)[0]
+            sentence = re.sub(action, a2, sentence, 1)
+
+        # F.eks action needs double letters when changed to an ing action
+        # F.eks rob becomes robbing
+        # (b needs to be doubled)
+        # @d indicates that the action needs a double letter
+
+        if str(action).endswith('@d'):
+
+            # If        action = 'rob@d'
+            # then      a2 = 'rob'
+            # and       last_char = 'b'
+            # then      a3 = 'robb'
+            # action becomes 'robbing' in the sentence
+
+            a2 = str(action).rsplit('@d', 1)[0]
+            last_char = a2[len(a2) - 1:]
+            a3 = str(a2 + last_char)
+            sentence = re.sub(action, a3, sentence, 1)
+
+    else:
+
+        # If action does not need to be change in an ing action
+        # but has the @d, remove the @d
+
+        try:
+            a2 = str(action).rsplit('@d', 1)[0]
+            sentence = re.sub(action, a2, sentence, 1)
+
+        # If action does not need to be change in an ing action
+        # and there are no placeholders, send the sentence back
+
+        except:
+            return sentence
 
     return sentence
 
