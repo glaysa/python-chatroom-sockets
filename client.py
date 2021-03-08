@@ -9,6 +9,7 @@ import time
 # Status indicators
 stop_thread = False
 replied = False
+debug = False
 
 # Dynamic Data
 list_of_bots = ['andrea', 'steven', 'arthur']
@@ -56,27 +57,43 @@ def receive():
         if stop_thread:
             break
 
-        # Try block used to check if we can still received data from the server,
+        # This try block is used to check if we can still received data from the server,
         # otherwise runs the except block, meaning the server is no longer running
 
         try:
             incoming_msg = client.recv(1024)
 
             # Try block used to check if incoming message is a json object or string,
-            # if message is string, it runs the except block
+            # if the message is a string, it runs the except block
 
             try:
+                # Parses the json object, and prints it
                 parsed_msg = json.loads(incoming_msg)
                 msg_sender = parsed_msg["sender"]
                 msg_content = parsed_msg["message"]
                 extracted_actions = parsed_msg["actions"]
                 extracted_reaction = parsed_msg["reaction"]
 
+                # If the sender is the current alias,
+                # They see not their alias, but 'You' instead
+
+                if msg_sender == alias:
+                    msg_sender = 'You'
+
                 # Any json object incoming message will be printed
                 print(f"> {msg_sender}: {msg_content}")
-                print(f"(Expecting a {parsed_msg['reaction']} response)\n")
 
-            # If message is simply a string,
+                # When other clients debug is on, they will be able to see what your bot expects as a response
+                if msg_sender != 'You':
+                    if debug:
+                        print(f"\n\t[{msg_sender} is expecting a {parsed_msg['reaction']} response]\n")
+
+                # When your debug is on, you'll be able to see what your bot expects as a response
+                else:
+                    if debug:
+                        print(f"\n\t[Your bot is expecting a {parsed_msg['reaction']} response]\n")
+
+            # If the message is simply a string,
             # they are evaluated and/or printed out
 
             except:
@@ -101,8 +118,7 @@ def receive():
                     # If all bots are in use, ask to run a new server or connect with a new alias
                     else:
                         print(f"\nBots on server ({host}: {port}) are all online."
-                              f"\nEither connect to a new server or connect with a different alias."
-                              f"\nA bot will be automatically assigned.")
+                              f"\nEither connect to a new server or connect with a different alias.\n")
 
                         answer = input('Do you want to connect with a different alias? [y/n]: ')
 
@@ -110,7 +126,7 @@ def receive():
                         # a bot will be assigned automatically with the alias they've given
 
                         if answer.lower() == 'y':
-                            alias = input("Enter an alias: ")
+                            alias = input("Give the bot an alias: ")
                             client.send(alias.encode())
 
                         # If user does not want to connect,
@@ -128,7 +144,7 @@ def receive():
                             client.send('error'.encode())
                             stop_thread = True
 
-                # The bot can only reply, when all passed conversations are sent
+                # The bot can only reply, when all past conversations are sent
                 elif incoming_msg.decode() == 'end of history':
                     if not replied:
                         respond(extracted_reaction)
@@ -142,9 +158,8 @@ def receive():
         # If server is no longer running, stop receiving thread
         except Exception as err:
 
-            print(f"\nServer is no longer running."
-                  f"You can terminate the connection with 'quit' keyword.")
             print(err)
+            print(f"\nServer is no longer running.")
             stop_thread = True
             client.close()
 
@@ -154,11 +169,12 @@ def respond(reaction):
 
     while not replied:
 
-        # Shows that the bot is formulating a reply
-        print(f"\t[Actions found from previous reply: {extracted_actions} ]")
-        print(f"\t[(Your bot is formulating a {reaction} response...)]\n")
-        time.sleep(2)
+        # Only shown when debug is on
+        if debug:
+            print(f"\t[Your bot is formulating a {reaction} response...)]")
+            print(f"\t[Actions found from previous reply: {extracted_actions}]\n")
 
+        time.sleep(.5)
         response = bot(alias, extracted_actions, reaction)
         bot_response = json.dumps(response)
         client.send(bot_response.encode())
@@ -166,7 +182,7 @@ def respond(reaction):
 
 
 def client_command():
-    global stop_thread, replied
+    global stop_thread, replied, debug
 
     # A bot can terminate connection to server with the keyword quit
     while True:
@@ -179,18 +195,30 @@ def client_command():
                 client.send(f'quit {alias}'.encode())
                 stop_thread = True
                 break
+
             elif command == 'reply':
-                '''if msg_sender == alias:
-                    print(f"\t[You can't reply to your own message.]\n")
+                if msg_sender == 'You':
+                    print(f"\n\t[You can't reply to your own message.]\n")
                     continue
-                else:'''
-                replied = False
-                respond(extracted_reaction)
+                else:
+                    replied = False
+                    respond(extracted_reaction)
+
+            elif command == 'debug on':
+                debug = True
+                print(f"\n\t[Bot 'thought' process is enabled]\n")
+
+            elif command == 'debug off':
+                debug = False
+                print(f"\n\t[Bot 'thought' process is disabled]\n")
+
             else:
                 print(f"Commands: \n"
                       f"quit: \t terminate connection to server\n"
-                      f"reply: \t make the bot reply to the previous response")
-        except:
+                      f"reply: \t make the bot reply to the previous response\n"
+                      f"debug on/off: \t enables and disables bot 'thought' process")
+        except Exception as e:
+            print(e)
             stop_thread = True
             client.close()
             break

@@ -1,4 +1,5 @@
 from cli_parameters import server_parameters
+from bots import grammar_fixer
 import threading
 import socket
 import random
@@ -172,7 +173,7 @@ def get_time():
 
 
 # Server action choices
-server_choices = ['eat', 'cook', 'fight', 'paint', 'complain', 'swim', 'party', 'camp']
+server_choices = ['eat', 'cook', 'fight', 'paint', 'complain', 'swim@d', 'party', 'camp', 'jog@d', 'dive', 'craft']
 # Server chosen actions
 server_actions = []
 # Placeholder
@@ -195,7 +196,7 @@ def generate_server_suggestion():
         f"No matter what you guys say, you're coming. We're gonna {wtr} together!"])
 
     counter = count(suggestion, wtr)
-    suggestion = replace_word(suggestion, counter)
+    suggestion = replace_placeholder(suggestion, counter)
 
     return {"sender": random.choice(hosts),
             "message": suggestion,
@@ -212,10 +213,12 @@ def generate_actions():
 
 
 # replaces the placeholder with random actions
-def replace_word(text, limit):
+def replace_placeholder(sentence, limit):
     for i in range(limit):
-        text = re.sub(wtr, generate_actions(), text, 1)
-    return text
+        action = generate_actions()
+        sentence = re.sub(wtr, action, sentence, 1)
+        sentence = grammar_fixer(sentence, action)
+    return sentence
 
 
 # Counds the number of placeholders needed to be replaced

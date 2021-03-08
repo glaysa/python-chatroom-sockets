@@ -9,12 +9,10 @@ kwtr2 = '@2'
 # the variable 'duo_letters' is introduced
 duo_letters = d = '@d'
 
-'''actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
+actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
            'kick', 'out', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
-           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'video game']'''
-
-e_actions = ['code', 'dance', 'exercise', 'hike', 'skate', 'carve', 'drive', 'picture take', 'video game', 'race']
-d_actions = [f'jog{d}', f'rob{d}']
+           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'video game', 'exercise', f'rob{d}',
+           f'jog{d}']
 
 # You can easily add new responses below
 # When adding new responses, use placeholders

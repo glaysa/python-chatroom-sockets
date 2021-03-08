@@ -34,8 +34,10 @@ Alternatively: Parameters can be passed in with no options like so:
 
 
 Bot commands:
-[quit]  \t Terminate connection to server
-[reply] \t Make the bot reply
+[quit]      \t Terminate connection to server
+[reply]     \t Make the bot reply
+[debug on]  \t enables bot 'thoughts'
+[debug off] \t disables bot 'thoughts'
 """
 
 

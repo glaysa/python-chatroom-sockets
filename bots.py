@@ -88,7 +88,7 @@ def formulate_sentence(sentence, reaction):
 
 # Generates actions from the bot actions list
 def suggest_new_action():
-    action = responses.d_actions.pop(random.choice(range(len(responses.d_actions))))
+    action = responses.actions.pop(random.choice(range(len(responses.actions))))
     if action not in new_actions:
         new_actions.append(action)
     return action
@@ -97,8 +97,15 @@ def suggest_new_action():
 # Generates actions suggested by other clients
 def get_action():
     action = extracted_actions.pop(random.choice(range(len(extracted_actions))))
+
+    # Prevents bot from suggesting the same action as the previous bot
+    if action in responses.actions:
+        responses.actions.remove(action)
+
+    # Prevents duplicates on
     if action not in new_actions:
         new_actions.append(action)
+
     return action
 
 
