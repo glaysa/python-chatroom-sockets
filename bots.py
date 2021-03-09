@@ -18,9 +18,16 @@ extracted_actions = []
 new_actions = []
 
 
-# Bot that can be reused using different aliases
-# With this, there is no need for multiple bots
-# because it has a variety of responses (responses.py)
+# This bot method can be reused
+# You can create multiple clients with the method
+# as long as the alias given is not used by other clients
+# There are 3 predefined 'bots' [steven, arthur, andrea]
+# As long as these predefined aliases are available,
+# when running client.py and the bot option is not specified,
+# these bots are connected automatically
+# If all bots are all in use, the user is asked if they want to connect
+# if yes, a bot name is requested
+# If no, their connected is terminated
 
 def bot(alias, actions, reaction):
     global extracted_actions
@@ -49,6 +56,10 @@ def format_replies(sender, message, actions, reaction):
 # responses.py depending on the expected reaction
 
 def generate_reply(reaction):
+
+    # Uses only actions mentioned from the previous reply
+    new_actions.clear()
+
     if reaction == p:
         sentence = random.choice(responses.positive_replies)
     elif reaction == n:
@@ -60,6 +71,7 @@ def generate_reply(reaction):
 
 
 def formulate_sentence(sentence, reaction):
+    # Counts the number of placeholders needed to be replaced
     count_keyword_1 = count(sentence, keyword_to_replace1)
     count_keyword_2 = count(sentence, keyword_to_replace2)
     number_of_actions = len(extracted_actions)
@@ -77,16 +89,20 @@ def formulate_sentence(sentence, reaction):
     # if the number of actions is enough to replace the number of placeholders
     else:
         if count_keyword_1 > 0:
-            new_actions.clear()
             sentence = replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
+
         if count_keyword_2 > 0:
+
+            # all actions from previous reply is ignored
+            # while new suggested actions are the only ones sent back
+
             new_actions.clear()
             sentence = replace_placeholder(sentence, keyword_to_replace2, count_keyword_2)
 
     return sentence
 
 
-# Generates actions from the bot actions list
+# Generates actions from the actions list (responses.py)
 def suggest_new_action():
     action = responses.actions.pop(random.choice(range(len(responses.actions))))
     if action not in new_actions:
@@ -102,7 +118,7 @@ def get_action():
     if action in responses.actions:
         responses.actions.remove(action)
 
-    # Prevents duplicates on
+    # Prevents duplicates
     if action not in new_actions:
         new_actions.append(action)
 
@@ -114,14 +130,16 @@ def get_action():
 
 def replace_placeholder(sentence, keyword, limit):
 
-    # If placeholder replacement should be from extracted actions
+    # If placeholder replacement needs to be from extracted actions
+    # (actions suggested by other clients)
     if keyword == kwtr1:
         for i in range(limit):
             action = get_action()
             sentence = re.sub(kwtr1, action, sentence, 1)
             sentence = grammar_fixer(sentence, action)
 
-    # If placeholder replacement should be from bots actions
+    # If placeholder replacement needs to be from actions
+    # (actions this client want to suggest)
     if keyword == kwtr2:
         for i in range(limit):
             action = suggest_new_action()
@@ -169,17 +187,19 @@ def grammar_fixer(sentence, action):
 
     else:
 
-        # If action does not need to be change in an ing action
+        # If action does not need to change to an ing action
         # but has the @d, remove the @d
 
         try:
             a2 = str(action).rsplit('@d', 1)[0]
             sentence = re.sub(action, a2, sentence, 1)
 
-        # If action does not need to be change in an ing action
+        # If action does not need to change to an ing action
         # and there are no placeholders, send the sentence back
 
         except:
+
+            # When no grammar is needed to be fixed
             return sentence
 
     return sentence

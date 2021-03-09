@@ -174,7 +174,7 @@ def respond(reaction):
             print(f"\t[Your bot is formulating a {reaction} response...)]")
             print(f"\t[Actions found from previous reply: {extracted_actions}]\n")
 
-        time.sleep(.5)
+        # time.sleep(.5)
         response = bot(alias, extracted_actions, reaction)
         bot_response = json.dumps(response)
         client.send(bot_response.encode())
@@ -184,7 +184,7 @@ def respond(reaction):
 def client_command():
     global stop_thread, replied, debug
 
-    # A bot can terminate connection to server with the keyword quit
+    # User can command a bot to quit, reply and enable/disable debug mode
     while True:
         if stop_thread:
             break
@@ -192,31 +192,40 @@ def client_command():
         try:
             command = input('').lower()
             if command == 'quit':
+                print(f"\n\t[Command Recognized: ({command})]")
+                print(f"\t[Quitting...]")
+                time.sleep(2)
+
                 client.send(f'quit {alias}'.encode())
                 stop_thread = True
                 break
 
             elif command == 'reply':
+
                 if msg_sender == 'You':
                     print(f"\n\t[You can't reply to your own message.]\n")
                     continue
                 else:
+                    print(f"\n\t[Command Recognized: ({command})]")
                     replied = False
                     respond(extracted_reaction)
 
             elif command == 'debug on':
                 debug = True
-                print(f"\n\t[Bot 'thought' process is enabled]\n")
+                print(f"\n\t[Command Recognized: ({command})]")
+                print(f"\t[Bot debug mode is enabled]\n")
 
             elif command == 'debug off':
                 debug = False
-                print(f"\n\t[Bot 'thought' process is disabled]\n")
+                print(f"\n\t[Command Recognized: ({command})]")
+                print(f"\t[Bot debug mode is disabled]\n")
 
             else:
-                print(f"Commands: \n"
-                      f"quit: \t terminate connection to server\n"
-                      f"reply: \t make the bot reply to the previous response\n"
-                      f"debug on/off: \t enables and disables bot 'thought' process")
+                print(f"\tCommands: \n"
+                      f"\tquit: \t terminate connection to server\n"
+                      f"\treply: \t make the bot reply to the previous response\n"
+                      f"\tdebug on/off: \t enables and disables bot 'thought' process\n")
+
         except Exception as e:
             print(e)
             stop_thread = True

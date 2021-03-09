@@ -82,7 +82,13 @@ def receive(client):
             # If all clients disconnects, close the server
             if not clients:
                 print("\nAll clients has been disconnected.")
+
+                print(f"Closing server...")
+                time.sleep(2)
+
                 print("Server closed!")
+                time.sleep(2)
+
                 server.close()
 
             break
@@ -192,7 +198,7 @@ def generate_server_suggestion():
         f"Wanna {wtr} or {wtr}, maybe {wtr}? Anything's fine ... just pick and save me from boredom!",
         f"Hey! I'm free this weekend, wanna {wtr} and {wtr}? Invite the others.",
         f"This is out out of nowhere, but wanna {wtr}?",
-        f"I heard {wtr} and {wtr} can deepen our friendship. You guys up for it?",
+        f"I heard {wtr}ing and {wtr}ing can deepen our friendship. You guys up for it?",
         f"No matter what you guys say, you're coming. We're gonna {wtr} together!"])
 
     counter = count(suggestion, wtr)

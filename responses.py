@@ -1,12 +1,17 @@
 
 # Placeholders
+# kwtr = keyword to replace
+# kwtr1 = this placeholder is replaced with an action found in the previous response of a client
+# kwtr2 = this placeholder is replaced with an action found in the actions array below
+
 kwtr1 = '@1'
 kwtr2 = '@2'
 
-# Some actions need to be change when becoming an ing action
+# Some actions need to change when becoming an ing action
 # F.eks rob becomes robbing
 # to indicate the action needs double letters,
 # the variable 'duo_letters' is introduced
+
 duo_letters = d = '@d'
 
 actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
