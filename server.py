@@ -1,12 +1,12 @@
 from cli_parameters import server_parameters
-from bots import grammar_fixer
+from responses import host_actions
+from bots import bot
 import threading
 import socket
 import random
 import time
 import json
 import sys
-import re
 
 try:
     # Connection Data
@@ -46,7 +46,7 @@ def receive(client):
             message = client.recv(1024)
 
             # When clients send a message with the keyword quit
-            # They are disconnected from the server
+            # Terminate their connection
 
             if 'quit' in message.decode():
                 client_to_quit = message.decode()[5:]
@@ -178,61 +178,11 @@ def get_time():
     return time.strftime("%H:%M", time.localtime())
 
 
-# Server action choices
-server_choices = ['eat', 'cook', 'fight', 'paint', 'complain', 'swim@d', 'party', 'camp', 'jog@d', 'dive', 'craft']
-# Server chosen actions
-server_actions = []
-# Placeholder
-suggestion_char = wtr = '@'
-
-
 # Generates a suggestion
 def generate_server_suggestion():
     reaction = ['negative', 'positive', 'neutral']
+    return bot('Host', random.choice(host_actions), random.choice(reaction))
 
-    # Dynamic Host names
-    hosts = ['Troublemaker Friend', 'Hyper Friend', 'Sassy Friend', 'Grumpy Friend', 'Sweet Friend']
-
-    # Dynamic suggestions
-    suggestion = random.choice([
-        f"Wanna {wtr} or {wtr}, maybe {wtr}? Anything's fine ... just pick and save me from boredom!",
-        f"Hey! I'm free this weekend, wanna {wtr} and {wtr}? Invite the others.",
-        f"This is out out of nowhere, but wanna {wtr}?",
-        f"I heard {wtr}ing and {wtr}ing can deepen our friendship. You guys up for it?",
-        f"No matter what you guys say, you're coming. We're gonna {wtr} together!"])
-
-    counter = count(suggestion, wtr)
-    suggestion = replace_placeholder(suggestion, counter)
-
-    return {"sender": random.choice(hosts),
-            "message": suggestion,
-            "actions": server_actions,
-            "reaction": random.choice(reaction)}
-
-
-# Generates a random action
-def generate_actions():
-    action = server_choices.pop(random.choice(range(len(server_choices))))
-    if action not in server_choices:
-        server_actions.append(action)
-    return action
-
-
-# replaces the placeholder with random actions
-def replace_placeholder(sentence, limit):
-    for i in range(limit):
-        action = generate_actions()
-        sentence = re.sub(wtr, action, sentence, 1)
-        sentence = grammar_fixer(sentence, action)
-    return sentence
-
-
-# Counds the number of placeholders needed to be replaced
-def count(text, word_to_replace):
-    counter = 0
-    for _ in re.finditer(word_to_replace, text):
-        counter += 1
-    return counter
 
 # Generates a server suggestion and converted to a json object
 server_suggestion = json.dumps(generate_server_suggestion())

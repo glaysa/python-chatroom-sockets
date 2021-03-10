@@ -158,10 +158,10 @@ def receive():
         # If server is no longer running, stop receiving thread
         except Exception as err:
 
-            print(err)
-            print(f"\nServer is no longer running.")
+            print(f"\nRCV: " + str(err))
+            print(f"Server is no longer running.")
             stop_thread = True
-            client.close()
+            # client.close()
 
 
 def respond(reaction):
@@ -172,7 +172,7 @@ def respond(reaction):
         # Only shown when debug is on
         if debug:
             print(f"\t[Your bot is formulating a {reaction} response...)]")
-            print(f"\t[Actions found from previous reply: {extracted_actions}]\n")
+            print(f"\t[Suggested action(s) found from previous reply: {extracted_actions}]\n")
 
         # time.sleep(.5)
         response = bot(alias, extracted_actions, reaction)
@@ -189,10 +189,15 @@ def client_command():
         if stop_thread:
             break
 
+        commands = ['reply', 'quit', 'debug on', 'debug off']
         try:
             command = input('').lower()
+
+            if command in commands:
+                if debug:
+                    print(f"\n\t[Command Recognized: ({command})]")
+
             if command == 'quit':
-                print(f"\n\t[Command Recognized: ({command})]")
                 print(f"\t[Quitting...]")
                 time.sleep(2)
 
@@ -203,33 +208,30 @@ def client_command():
             elif command == 'reply':
 
                 if msg_sender == 'You':
-                    print(f"\n\t[You can't reply to your own message.]\n")
+                    print(f"\t[You can't reply to your own message.]\n")
                     continue
                 else:
-                    print(f"\n\t[Command Recognized: ({command})]")
                     replied = False
                     respond(extracted_reaction)
 
             elif command == 'debug on':
                 debug = True
-                print(f"\n\t[Command Recognized: ({command})]")
                 print(f"\t[Bot debug mode is enabled]\n")
 
             elif command == 'debug off':
                 debug = False
-                print(f"\n\t[Command Recognized: ({command})]")
                 print(f"\t[Bot debug mode is disabled]\n")
 
             else:
-                print(f"\tCommands: \n"
-                      f"\tquit: \t terminate connection to server\n"
-                      f"\treply: \t make the bot reply to the previous response\n"
-                      f"\tdebug on/off: \t enables and disables bot 'thought' process\n")
+                print(f"\n\tCommands: \n"
+                      f"\t- quit:         \t terminate connection to server\n"
+                      f"\t- reply:        \t make the bot reply to the previous response\n"
+                      f"\t- debug on/off: \t enables and disables bot 'thought' process\n")
 
         except Exception as e:
-            print(e)
+            print("CMD: " + str(e))
             stop_thread = True
-            client.close()
+            # client.close()
             break
 
 

@@ -8,36 +8,53 @@ p = 'positive'
 n = 'negative'
 r = [u, p, n]
 
-# Placeholder to actions in responses (see responses.py)
+# Placeholder that is replaced with an action suggested by other clients
 keyword_to_replace1 = kwtr1 = responses.kwtr1
+# Placeholder that is replaced with an action suggested by this client
 keyword_to_replace2 = kwtr2 = responses.kwtr2
+# Placeholder that is replaced with an action suggested by the host
+keyword_to_replace3 = kwtr3 = responses.kwtr3
 
-# Suggested actions
-extracted_actions = []
-# New set of actions suggested by the bot
+# Actions suggested by other clients
+suggested_actions = []
+# New set of actions suggested by the this client
 new_actions = []
+# Alias of a bot
+alias = ''
 
 
 # This bot method can be reused
-# You can create multiple clients with the method
-# as long as the alias given is not used by other clients
+# You can create multiple clients with this bot
+# as long as the alias given is not already used by other clients
+
 # There are 3 predefined 'bots' [steven, arthur, andrea]
 # As long as these predefined aliases are available,
-# when running client.py and the bot option is not specified,
+# when running client.py and the bot option bot is not specified,
 # these bots are connected automatically
+
 # If all bots are all in use, the user is asked if they want to connect
 # if yes, a bot name is requested
-# If no, their connected is terminated
+# If no, their connection is terminated
 
-def bot(alias, actions, reaction):
-    global extracted_actions
-    extracted_actions = actions
+# The host can also use this bot
+# however is doesn't use the same dialogs as the regular bots (see responses.py)
+
+def bot(bot_name, actions, reaction):
+    global suggested_actions, alias
+    suggested_actions = actions
+    alias = bot_name
     reply = ''
+
+    print(suggested_actions)
 
     if len(actions) > 0:
         reply += generate_reply(reaction)
     else:
         return format_replies(alias, "I don't know how to respond to that.", actions, random.choice(r))
+
+    # Just makes the host name more dynamic
+    if alias == 'Host':
+        alias = random.choice(responses.host_identities)
 
     return format_replies(alias, reply, new_actions, random.choice(r))
 
@@ -54,57 +71,85 @@ def format_replies(sender, message, actions, reaction):
 
 # Bot generates a reply coming from
 # responses.py depending on the expected reaction
+# and depending who the bot is, the host has a different set of responses
 
 def generate_reply(reaction):
 
-    # Uses only actions mentioned from the previous reply
+    # By clearing the new_actions list, it u
+    # uses only actions mentioned from the previous reply
     new_actions.clear()
 
-    if reaction == p:
-        sentence = random.choice(responses.positive_replies)
-    elif reaction == n:
-        sentence = random.choice(responses.negative_replies)
+    # If the bot is the host, use the host dialogs
+    if alias == 'Host':
+        suggestion = random.choice(responses.suggestions)
+        return formulate_sentence(suggestion, reaction)
+
+    # If the bot is a regular client, use the client dialogs
     else:
-        sentence = random.choice(responses.neutral_replies)
+        if reaction == p:
+            sentence = random.choice(responses.positive_replies)
+        elif reaction == n:
+            sentence = random.choice(responses.negative_replies)
+        else:
+            sentence = random.choice(responses.neutral_replies)
 
     return formulate_sentence(sentence, reaction)
 
 
 def formulate_sentence(sentence, reaction):
-    # Counts the number of placeholders needed to be replaced
+    # Counts placeholders from other clients replies
     count_keyword_1 = count(sentence, keyword_to_replace1)
+    # Counts placeholders from this clients' reply
     count_keyword_2 = count(sentence, keyword_to_replace2)
-    number_of_actions = len(extracted_actions)
+    # Counts placeholders from the hosts' suggestion
+    count_keyword_3 = count(sentence, keyword_to_replace3)
+    # Length of suggested action list
+    number_of_actions = len(suggested_actions)
 
-    # Number of actions must be greater than the number of placeholders
-    if count_keyword_1 > number_of_actions:
-        while count_keyword_1 > number_of_actions:
-            sentence = generate_reply(reaction)
-            count_keyword_1 = count(sentence, keyword_to_replace1)
-            if number_of_actions >= count_keyword_1:
-                break
+    # If host keyword is greater than 0, formulate the sentence
+    # This only occurs when the very first client connects
 
-        return replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
-
-    # if the number of actions is enough to replace the number of placeholders
+    if count_keyword_3 > 0:
+        sentence = replace_placeholder(sentence, keyword_to_replace3, count_keyword_3)
     else:
-        if count_keyword_1 > 0:
-            sentence = replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
 
-        if count_keyword_2 > 0:
+        # Number of actions must be greater than the number of placeholders
+        if count_keyword_1 > number_of_actions:
+            while count_keyword_1 > number_of_actions:
+                sentence = generate_reply(reaction)
+                count_keyword_1 = count(sentence, keyword_to_replace1)
+                if number_of_actions >= count_keyword_1:
+                    break
 
-            # all actions from previous reply is ignored
-            # while new suggested actions are the only ones sent back
+            return replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
 
-            new_actions.clear()
-            sentence = replace_placeholder(sentence, keyword_to_replace2, count_keyword_2)
+        # if the number of actions is enough to replace the number of placeholders
+        else:
+            if count_keyword_1 > 0:
+                sentence = replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
+
+            if count_keyword_2 > 0:
+
+                # all actions from previous reply is ignored
+                # while new suggested actions are the only ones sent back
+
+                new_actions.clear()
+                sentence = replace_placeholder(sentence, keyword_to_replace2, count_keyword_2)
 
     return sentence
 
 
-# Generates actions from the actions list (responses.py)
+# Generates actions from the host actions list (responses.py)
+def suggest_host_action():
+    action = responses.host_actions.pop(random.choice(range(len(responses.host_actions))))
+    if action not in new_actions:
+        new_actions.append(action)
+    return action
+
+
+# Generates actions from the bots actions list (responses.py)
 def suggest_new_action():
-    action = responses.actions.pop(random.choice(range(len(responses.actions))))
+    action = responses.bot_actions.pop(random.choice(range(len(responses.bot_actions))))
     if action not in new_actions:
         new_actions.append(action)
     return action
@@ -112,13 +157,7 @@ def suggest_new_action():
 
 # Generates actions suggested by other clients
 def get_action():
-    action = extracted_actions.pop(random.choice(range(len(extracted_actions))))
-
-    # Prevents bot from suggesting the same action as the previous bot
-    if action in responses.actions:
-        responses.actions.remove(action)
-
-    # Prevents duplicates
+    action = suggested_actions.pop(random.choice(range(len(suggested_actions))))
     if action not in new_actions:
         new_actions.append(action)
 
@@ -138,12 +177,20 @@ def replace_placeholder(sentence, keyword, limit):
             sentence = re.sub(kwtr1, action, sentence, 1)
             sentence = grammar_fixer(sentence, action)
 
-    # If placeholder replacement needs to be from actions
+    # If placeholder replacement needs to be from bots actions
     # (actions this client want to suggest)
     if keyword == kwtr2:
         for i in range(limit):
             action = suggest_new_action()
             sentence = re.sub(kwtr2, action, sentence, 1)
+            sentence = grammar_fixer(sentence, action)
+
+    # If placeholder replacement needs to be from host actions
+    # (actions this client want to suggest)
+    if keyword == kwtr3:
+        for i in range(limit):
+            action = suggest_host_action()
+            sentence = re.sub(kwtr3, action, sentence, 1)
             sentence = grammar_fixer(sentence, action)
 
     return sentence

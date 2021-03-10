@@ -1,8 +1,7 @@
-
 # Placeholders
-# kwtr = keyword to replace
+# kwtr abbreviation -> (keyword to replace)
 # kwtr1 = this placeholder is replaced with an action found in the previous response of a client
-# kwtr2 = this placeholder is replaced with an action found in the actions array below
+# kwtr2 = this placeholder is replaced with an action found in the client actions array below
 
 kwtr1 = '@1'
 kwtr2 = '@2'
@@ -13,11 +12,11 @@ kwtr2 = '@2'
 # the variable 'duo_letters' is introduced
 
 duo_letters = d = '@d'
+# bot_actions = ['cook', 'drink', 'eat', 'clean', 'play']
 
-actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
-           'kick', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
-           'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'shoot', 'exercise', f'rob{d}',
-           f'jog{d}']
+bot_actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
+               'kick', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
+               'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'shoot', 'exercise']
 
 # You can easily add new responses below
 # When adding new responses, use placeholders
@@ -64,4 +63,22 @@ neutral_replies = [
     f"If the weather is good, then so is my mood for {kwtr1}ing.",
     f"I woke up today and got the feeling that I would go {kwtr1}.",
     f"May it be {kwtr1}ing or {kwtr1}ing, {kwtr2}ing should always be a part of today's activities."
+]
+
+# Data used by the host bot ============================================================================================
+
+# kwtr3 = this placeholder is replaced with an action found in the server actions array below
+# Just like above, you can add more host suggestion using the placeholder kwtr3 for dynamic action
+
+kwtr3 = '@3'
+host_identities = ['Grumpy Friend', 'Sassy Friend', 'Troublemaker Friend', 'Sweet Friend']
+host_actions = ['eat', 'cook', 'fight', 'paint', 'complain', f'swim{d}', 'party', 'camp', f'jog{d}', 'dive', 'craft',
+                f'rob{d}']
+
+suggestions = [
+    f"Wanna {kwtr3} or {kwtr3}, maybe {kwtr3}? Anything's fine ... just pick and save me from boredom!",
+    f"Hey! I'm free this weekend, wanna {kwtr3} and {kwtr3}? Invite the others.",
+    f"This is out of nowhere, but wanna {kwtr3}?",
+    f"I heard {kwtr3}ing and {kwtr3}ing can deepen our friendship. You guys up for it?",
+    f"No matter what you guys say, you're coming. We're gonna {kwtr3} together!"
 ]
