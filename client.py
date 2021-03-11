@@ -161,7 +161,7 @@ def receive():
             print(f"\nRCV: " + str(err))
             print(f"Server is no longer running.")
             stop_thread = True
-            # client.close()
+            client.close()
 
 
 def respond(reaction):
@@ -231,7 +231,7 @@ def client_command():
         except Exception as e:
             print("CMD: " + str(e))
             stop_thread = True
-            # client.close()
+            client.close()
             break
 
 

@@ -12,11 +12,11 @@ kwtr2 = '@2'
 # the variable 'duo_letters' is introduced
 
 duo_letters = d = '@d'
-# bot_actions = ['cook', 'drink', 'eat', 'clean', 'play']
+bot_actions = ['cook', 'drink', 'eat', 'clean', 'play']
 
-bot_actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
+'''bot_actions = ['cook', 'drink', 'eat', 'bowl', 'fight', 'draw', 'hike', 'code', 'study', 'skate', 'fish', 'party',
                'kick', 'drive', 'climb', 'clean', 'learn', 'ski', 'sculpt', 'sing', 'paint', 'carve', 'race',
-               'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'shoot', 'exercise']
+               'code', 'flower pick', 'story tell', 'game build', 'train', 'play', 'shoot', 'exercise']'''
 
 # You can easily add new responses below
 # When adding new responses, use placeholders
@@ -72,11 +72,11 @@ neutral_replies = [
 
 kwtr3 = '@3'
 host_identities = ['Grumpy Friend', 'Sassy Friend', 'Troublemaker Friend', 'Sweet Friend']
-host_actions = ['eat', 'cook', 'fight', 'paint', 'complain', f'swim{d}', 'party', 'camp', f'jog{d}', 'dive', 'craft',
-                f'rob{d}']
+host_actions = ['eat', 'cook']
+# 'fight', 'paint', 'complain', f'swim{d}', 'party', 'camp', f'jog{d}', 'dive', 'craft', f'rob{d}']
 
 suggestions = [
-    f"Wanna {kwtr3} or {kwtr3}, maybe {kwtr3}? Anything's fine ... just pick and save me from boredom!",
+    #f"Wanna {kwtr3} or {kwtr3}, maybe {kwtr3}? Anything's fine ... just pick and save me from boredom!",
     f"Hey! I'm free this weekend, wanna {kwtr3} and {kwtr3}? Invite the others.",
     f"This is out of nowhere, but wanna {kwtr3}?",
     f"I heard {kwtr3}ing and {kwtr3}ing can deepen our friendship. You guys up for it?",

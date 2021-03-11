@@ -3,6 +3,7 @@ import re
 
 chars1 = ['a', 'b']
 chars2 = ['a', 'b', 'c', 'd', 'e']
+temp = []
 
 
 def test():
@@ -23,4 +24,29 @@ def test():
         ch2 = random.choice(c)
         print(f"New action to suggest: {ch2}\n")
 
-test()
+
+def tmp():
+    c = chars2
+    print(f'C: {c}')
+
+    while True:
+        a = random.choice(chars2)
+        if a not in temp:
+            temp.append(a)
+            if len(temp) == 2:
+                break
+        else:
+            print(f'existing already: {a}')
+            continue
+
+    print(f'Temp: {temp}')
+
+    for val in temp:
+        print(val)
+        c.remove(val)
+
+    print(f'New choices: {c}')
+    a = random.choice(c)
+    print(f'Chosen value: {a}')
+
+tmp()
