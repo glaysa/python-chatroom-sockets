@@ -1,3 +1,4 @@
+import bots
 from cli_parameters import client_parameters
 from bots import *
 import threading
@@ -86,12 +87,12 @@ def receive():
                 # When other clients debug is on, they will be able to see what your bot expects as a response
                 if msg_sender != 'You':
                     if debug:
-                        print(f"\n\t[{msg_sender} is expecting a {parsed_msg['reaction']} response]\n")
+                        print(f"\n\t-> {msg_sender} is expecting a {parsed_msg['reaction']} response\n")
 
                 # When your debug is on, you'll be able to see what your bot expects as a response
                 else:
                     if debug:
-                        print(f"\n\t[Your bot is expecting a {parsed_msg['reaction']} response]\n")
+                        print(f"\n\t-> Your bot is expecting a {parsed_msg['reaction']} response\n")
 
             # If the message is simply a string,
             # they are evaluated and/or printed out
@@ -171,10 +172,8 @@ def respond(reaction):
 
         # Only shown when debug is on
         if debug:
-            print(f"\t[Your bot is formulating a {reaction} response...)]")
-            print(f"\t[Suggested action(s) found from previous reply: {extracted_actions}]\n")
+            print(f"\t-> Your bot is formulating a {reaction} response...")
 
-        # time.sleep(.5)
         response = bot(alias, extracted_actions, reaction)
         bot_response = json.dumps(response)
         client.send(bot_response.encode())
@@ -189,16 +188,11 @@ def client_command():
         if stop_thread:
             break
 
-        commands = ['reply', 'quit', 'debug on', 'debug off']
         try:
             command = input('').lower()
 
-            if command in commands:
-                if debug:
-                    print(f"\n\t[Command Recognized: ({command})]")
-
             if command == 'quit':
-                print(f"\t[Quitting...]")
+                print(f"\t-> Quitting...")
                 time.sleep(2)
 
                 client.send(f'quit {alias}'.encode())
@@ -208,7 +202,7 @@ def client_command():
             elif command == 'reply':
 
                 if msg_sender == 'You':
-                    print(f"\t[You can't reply to your own message.]\n")
+                    print(f"\t-> You can't reply to your own message\n")
                     continue
                 else:
                     replied = False
@@ -216,17 +210,19 @@ def client_command():
 
             elif command == 'debug on':
                 debug = True
-                print(f"\t[Bot debug mode is enabled]\n")
+                bots.dev_mode = True
+                print(f"\n\t-> Bot debug mode is enabled\n")
 
             elif command == 'debug off':
                 debug = False
-                print(f"\t[Bot debug mode is disabled]\n")
+                bots.dev_mode = False
+                print(f"\n\t-> Bot debug mode is disabled\n")
 
             else:
                 print(f"\n\tCommands: \n"
                       f"\t- quit:         \t terminate connection to server\n"
                       f"\t- reply:        \t make the bot reply to the previous response\n"
-                      f"\t- debug on/off: \t enables and disables bot 'thought' process\n")
+                      f"\t- debug on/off: \t enables and disables bot debug mode\n")
 
         except Exception as e:
             print("CMD: " + str(e))

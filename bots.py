@@ -8,6 +8,8 @@ p = 'positive'
 n = 'negative'
 r = [u, p, n]
 
+dev_mode = False
+
 # Placeholder that is replaced with an action suggested by other clients
 keyword_to_replace1 = kwtr1 = responses.kwtr1
 # Placeholder that is replaced with an action suggested by the current bot
@@ -23,7 +25,7 @@ new_actions = []
 alias = ''
 
 # var choices = actions the bot can suggest,
-# manipulated so that not the same action is NOT suggested as the previous client
+# manipulated so that the same action is NOT suggested as the previous client
 # List manipulation necessary because all bots are sharing the same list of actions (see responses.py -> bot_actions[])
 choices = [x for x in responses.bot_actions]
 
@@ -51,7 +53,8 @@ def bot(bot_name, actions, reaction):
     reply = ''
 
     # Shows which actions are extracted from previous reply
-    print(f'Actions extracted from previous reply: {suggested_actions}')
+    if alias != 'Host' and dev_mode:
+        print(f'\t-> Suggested action(s) found from previous reply: {suggested_actions}')
 
     # These extracted action are temporarily removed so that
     # the current bot don't suggest it again
@@ -60,7 +63,8 @@ def bot(bot_name, actions, reaction):
             choices.remove(a)
 
     # Shows which actions the current bot can suggest
-    print(f'Action left to suggest: {choices}')
+    if alias != 'Host' and dev_mode:
+        print(f'\t-> Action(s) left to suggest: {choices}')
 
     # The bot response is formulated
     if len(actions) > 0:
@@ -69,7 +73,8 @@ def bot(bot_name, actions, reaction):
         return format_replies(alias, "I don't know how to respond to that.", actions, random.choice(r))
 
     # Shows which actions are used in the formulated sentence
-    print(f'Bot used this actions in its sentence: {new_actions}')
+    if alias != 'Host' and dev_mode:
+        print(f'\t-> Bot used this action(s) in its sentence: {new_actions}\n')
 
     # Just makes the host name more dynamic
     if alias == 'Host':
@@ -153,15 +158,15 @@ def formulate_sentence(sentence, reaction):
         else:
             if count_keyword_1 > 0:
                 sentence = replace_placeholder(sentence, keyword_to_replace1, count_keyword_1)
-                print(f'Actions the bot can suggest: {choices}')
 
             if count_keyword_2 > 0:
                 # new_actions.clear() = used so that all actions from previous reply is ignored
                 # except for the new suggested actions
                 new_actions.clear()
-                print(f'Actions the bot can suggest: {choices}')
                 sentence = replace_placeholder(sentence, keyword_to_replace2, count_keyword_2)
-                print(f'Actions left the bot can suggest: {choices}')
+
+                if dev_mode:
+                    print(f'\t-> Action(s) left to suggest: {choices}')
 
             choices.clear()
             choices = [x for x in responses.bot_actions]
@@ -180,7 +185,8 @@ def suggest_host_action():
 # Generates actions from the bots actions list (responses.py)
 def suggest_new_action(array):
     action = array.pop(random.choice(range(len(array))))
-    print(f'New action that is suggested: {action}')
+    if dev_mode:
+        print(f'\t-> New action the bot want to suggest: {action}')
 
     if action not in new_actions:
         new_actions.append(action)
@@ -192,9 +198,8 @@ def get_action():
     global choices
     action = suggested_actions.pop(random.choice(range(len(suggested_actions))))
 
-    if action in choices:
-        choices.remove(action)
-    print(f'Action not to suggest again (but can agree): {action}')
+    # if action in choices:
+    #    choices.remove(action)
 
     if action not in new_actions:
         new_actions.append(action)

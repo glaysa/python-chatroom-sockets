@@ -13,8 +13,8 @@ default_bots = ['andrea', 'steven', 'arthur']
 alias = random.choice(default_bots)
 
 client_help_docs = """
--h \t --help \t shows all command options
--l \t --list_bots \t shows all bots that can be used
+-h \t --help        \t shows all command options
+-l \t --list_bots   \t shows all bots that can be used
 
 
 Default Connection Data:
@@ -34,10 +34,9 @@ Alternatively: Parameters can be passed in with no options like so:
 
 
 Bot commands:
-[quit]      \t Terminate connection to server
-[reply]     \t Make the bot reply
-[debug on]  \t enables bot 'thoughts'
-[debug off] \t disables bot 'thoughts'
+[quit]          \t Terminate connection to server
+[reply]         \t Make the bot reply to previous message
+[debug on/off]  \t enables and disables bot debug mode
 """
 
 
