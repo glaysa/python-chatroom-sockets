@@ -18,15 +18,15 @@ client_help_docs = """
 
 
 Default Connection Data:
-- Default Host: \t 'localhost'
+- Default Host: \t localhost
 - Default Port: \t 4242
 - Default Bot:  \t Random bot from the bot array
     
 
 Change connection data by passing in parameters such as:
--i \t --ip   \t requires an IP address [-i 127.0.0.1]
--p \t --port \t requires a Port number [-p 4242]
--b \t --bot  \t requires a bot name as [-b edward]
+-i \t --ip   \t requires an IP address (-i 127.0.0.1)
+-p \t --port \t requires a Port number (-p 4242)
+-b \t --bot  \t requires a bot name as (-b edward)
 
 
 Alternatively: Parameters can be passed in with no options like so: 
@@ -95,17 +95,12 @@ def server_parameters():
 
     argument_list = sys.argv[1:]
 
-    if len(argument_list) == 1:
-        return {"host": default_host, "port": sys.argv[1]}
-    if len(argument_list) > 1:
-        print(f"\nParameters not recognized.\n"
-              f"{server_help_docs}")
-        sys.exit(2)
-    else:
+    opt_short = "hp:"
+    opt_long = ["help", "port="]
 
-        opt_short = "hp:"
-        opt_long = ["help", "port="]
-
+    try:
+        default_port = int(sys.argv[1])
+    except:
         try:
             arguments, values = getopt.getopt(argument_list, opt_short, opt_long)
         except getopt.error as e:
@@ -119,4 +114,4 @@ def server_parameters():
             elif curr_arg in ("-p", "--port"):
                 default_port = int(curr_val)
 
-        return {"host": default_host, "port": default_port}
+    return {"host": default_host, "port": default_port}

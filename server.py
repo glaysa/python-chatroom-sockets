@@ -184,7 +184,7 @@ def generate_server_suggestion():
     return bot('Host', random.choice(host_actions), random.choice(reaction))
 
 
-# Generates a server suggestion and converted to a json object
+# Generates a server suggestion and is converted to a json object
 server_suggestion = json.dumps(generate_server_suggestion())
 # Run accept
 accept()

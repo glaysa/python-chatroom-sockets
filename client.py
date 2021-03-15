@@ -27,7 +27,7 @@ try:
 
     # When given alias is not in the bots list, assign them a random bot
     if alias not in list_of_bots:
-        print(f"A bot will be automatically assigned with this alias [{alias}].")
+        print(f"A bot will be automatically initialized with this alias [{alias}].")
 
     # Initializing Connection
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -64,7 +64,7 @@ def receive():
         try:
             incoming_msg = client.recv(1024)
 
-            # Try block used to check if incoming message is a json object or string,
+            # This try block is used to check if incoming message is a json object or a string,
             # if the message is a string, it runs the except block
 
             try:
@@ -84,12 +84,12 @@ def receive():
                 # Any json object incoming message will be printed
                 print(f"> {msg_sender}: {msg_content}")
 
-                # When other clients debug is on, they will be able to see what your bot expects as a response
+                # When other clients debug is on, they will be able to see what your bots expects as a response
                 if msg_sender != 'You':
                     if debug:
                         print(f"\n\t-> {msg_sender} is expecting a {parsed_msg['reaction']} response\n")
 
-                # When your debug is on, you'll be able to see what your bot expects as a response
+                # When your debug is on, you'll be able to see what other bots expects as a response
                 else:
                     if debug:
                         print(f"\n\t-> Your bot is expecting a {parsed_msg['reaction']} response\n")
@@ -124,7 +124,7 @@ def receive():
                         answer = input('Do you want to connect with a different alias? [y/n]: ')
 
                         # If user connects with a new alias,
-                        # a bot will be assigned automatically with the alias they've given
+                        # a bot will be initialized automatically with the alias they've given
 
                         if answer.lower() == 'y':
                             alias = input("Give the bot an alias: ")
@@ -210,12 +210,12 @@ def client_command():
 
             elif command == 'debug on':
                 debug = True
-                bots.dev_mode = True
+                bots.debug = True
                 print(f"\n\t-> Bot debug mode is enabled\n")
 
             elif command == 'debug off':
                 debug = False
-                bots.dev_mode = False
+                bots.debug = False
                 print(f"\n\t-> Bot debug mode is disabled\n")
 
             else:

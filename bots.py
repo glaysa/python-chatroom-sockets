@@ -8,7 +8,7 @@ p = 'positive'
 n = 'negative'
 r = [u, p, n]
 
-dev_mode = False
+debug = False
 
 # Placeholder that is replaced with an action suggested by other clients
 keyword_to_replace1 = kwtr1 = responses.kwtr1
@@ -25,8 +25,8 @@ new_actions = []
 alias = ''
 
 # var choices = actions the bot can suggest,
-# manipulated so that the same action is NOT suggested as the previous client
-# List manipulation necessary because all bots are sharing the same list of actions (see responses.py -> bot_actions[])
+# manipulated so that the current bot doesn't suggest the same action as the previous suggested action
+# List manipulation necessary because all 'bots' are sharing the same list of actions (see responses.py -> bot_actions[])
 choices = [x for x in responses.bot_actions]
 
 # The bot() function can be reused
@@ -38,7 +38,7 @@ choices = [x for x in responses.bot_actions]
 # when running client.py and the bot option is not specified,
 # a bot is connected automatically with the available predefined alias
 
-# If all bots are all in use, the user is asked if they want to connect
+# If all bots are all in use, the user is asked if they want to still connect
 # if yes, a bot name is requested
 # If no, their connection is terminated
 
@@ -53,18 +53,21 @@ def bot(bot_name, actions, reaction):
     reply = ''
 
     # Shows which actions are extracted from previous reply
-    if alias != 'Host' and dev_mode:
+    if alias != 'Host' and debug:
         print(f'\t-> Suggested action(s) found from previous reply: {suggested_actions}')
 
-    # These extracted action are temporarily removed so that
+    # These extracted actions are temporarily removed so that
     # the current bot don't suggest it again
     for a in suggested_actions:
         if a in choices:
             choices.remove(a)
+            if debug:
+                print(f"\t-> [{a}] is temporarily removed from actions to prevent bot from suggesting the same action.")
+                print(f"\t-> Bot can still agree to action: [{a}]")
 
     # Shows which actions the current bot can suggest
-    if alias != 'Host' and dev_mode:
-        print(f'\t-> Action(s) left to suggest: {choices}')
+    # if alias != 'Host' and debug:
+    #    print(f'\t-> Action(s) left to suggest: {choices}')
 
     # The bot response is formulated
     if len(actions) > 0:
@@ -73,7 +76,7 @@ def bot(bot_name, actions, reaction):
         return format_replies(alias, "I don't know how to respond to that.", actions, random.choice(r))
 
     # Shows which actions are used in the formulated sentence
-    if alias != 'Host' and dev_mode:
+    if alias != 'Host' and debug:
         print(f'\t-> Bot used this action(s) in its sentence: {new_actions}\n')
 
     # Just makes the host name more dynamic
@@ -165,7 +168,7 @@ def formulate_sentence(sentence, reaction):
                 new_actions.clear()
                 sentence = replace_placeholder(sentence, keyword_to_replace2, count_keyword_2)
 
-                if dev_mode:
+                if debug:
                     print(f'\t-> Action(s) left to suggest: {choices}')
 
             choices.clear()
@@ -185,7 +188,7 @@ def suggest_host_action():
 # Generates actions from the bots actions list (responses.py)
 def suggest_new_action(array):
     action = array.pop(random.choice(range(len(array))))
-    if dev_mode:
+    if debug:
         print(f'\t-> New action the bot want to suggest: {action}')
 
     if action not in new_actions:
@@ -197,9 +200,6 @@ def suggest_new_action(array):
 def get_action():
     global choices
     action = suggested_actions.pop(random.choice(range(len(suggested_actions))))
-
-    # if action in choices:
-    #    choices.remove(action)
 
     if action not in new_actions:
         new_actions.append(action)
@@ -295,8 +295,8 @@ def grammar_fixer(sentence, action):
 
 
 # Counts how many placeholders needs to be replaced
-def count(sentence, word_to_replace):
+def count(sentence, placeholder):
     counter = 0
-    for _ in re.finditer(word_to_replace, sentence):
+    for _ in re.finditer(placeholder, sentence):
         counter += 1
     return counter
